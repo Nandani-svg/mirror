@@ -269,3 +269,44 @@ result[i + 3] = 255;
 
 return result;
 }
+
+function sobelFilter(data, width, height) {
+const kernelX = [
+[-1, 0, 1],
+[-2, 0, 2],
+[-1, 0, 1]
+];
+const kernelY = [
+[-1, -2, -1],
+[0, 0, 0],
+[1, 2, 1]
+ ];
+
+ const sobelData = new Uint8ClampedArray(width * height * 4);
+
+for (let y = 1; y < height - 1; y++) {
+for (let x = 1; x < width - 1; x++) {
+let px = (y * width + x) * 4;
+let gx = 0;
+let gy = 0;
+
+for (let cy = -1; cy <= 1; cy++) {
+for (let cx = -1; cx <= 1; cx++) {
+const cpx = ((y + cy) * width + (x + cx)) * 4;
+gx += data[cpx] * kernelX[cy + 1][cx + 1];
+gy += data[cpx] * kernelY[cy + 1][cx + 1];
+}
+}
+
+const magnitude = Math.sqrt(gx * gx + gy * gy);
+sobelData[px] = sobelData[px + 1] = sobelData[px + 2] = magnitude;
+ sobelData[px + 3] = 255; // alpha
+ }
+     }
+return sobelData;
+ }
+});
+  </script>
+</body>
+
+</html>
