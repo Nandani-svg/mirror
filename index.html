@@ -92,3 +92,65 @@ if (edgeDetectionEnabled) {
 cannyEdgeDetectionEnabled = false;
 }
 });
+
+document.getElementById('btnCanny').addEventListener('click', function () {
+cannyEdgeDetectionEnabled = !cannyEdgeDetectionEnabled;
+if (cannyEdgeDetectionEnabled) {
+edgeDetectionEnabled = false;
+}
+});
+
+btnToggle.addEventListener('click', function (){
+if (videoStream) {
+videoStream.getTracks().forEach(track => track.stop(();
+videoStream = null;
+btnToggle.textContent = 'Turn On'
+btnToggle.classList.replace('btn-danger', 'btn-success');
+} else {
+navigator.mediaDevices.getUserMedia({ video: true })
+.then(stream => {
+videoStream = stream;
+video.srcObject = stream;
+video.play();
+btnToggle.textContent = 'Turn Off';
+btnToggle.classList.replace('btn-success', 'btn-danger');
+draw();
+})
+.catch(error => {
+console.error('Error accessing the camera: ', error);
+})
+}
+});
+
+btnFlip.addEventListener('click', function () {
+flipHorizontal = !flipHorizontal;
+});
+
+btnEffect.addEventListener('click', function () {
+infinityEffect = !infinityEffect;
+});
+
+btnRotate.addEventListener('click', function () {
+rotationAngle = (rotationAngle + 90) % 360;
+canvas.style.transform = `rotate(${rotationAngle}deg)`;
+});
+
+btnSave.addEventListener('click', function () {
+if (canvas) {
+const link = document.createElement('a');
+link.download = 'infinity-mirror.png';
+link.href = canvas.toDataURL('image/png');
+link.click();
+}
+});
+
+function draw() {
+if (!videoStream) return;
+canvas.width = video.videoWidth;
+canvas.height = video.videoHeight;
+context.clearRect(0, 0, canvas.width, canvas.height);
+if (flipHorizontal) {
+context.save();
+context.scale(-1, 1);
+context.drawImage(video, -canvas.width, 0, canvas.width, canvas.height);
+context.restore();
