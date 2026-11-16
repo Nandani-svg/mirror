@@ -154,3 +154,66 @@ context.save();
 context.scale(-1, 1);
 context.drawImage(video, -canvas.width, 0, canvas.width, canvas.height);
 context.restore();
+} else {
+context.drawImage(video, 0, 0, canvas.width, canvas.height);
+}
+
+if (infinityEffect) {
+applyInfinityEffect(context, canvas.width, canvas.height);
+}
+
+if (edgeDetectionEnabled) {
+applyEdgeDetection(context, canvas.width, canvas.height);
+}
+
+if (cannyEdgeDetectionEnabled) {
+applyCannyEdgeDetection(context, canvas.width, canvas.height);
+}
+
+requestAnimationFrame(draw);
+}
+
+function applyInfinityEffect(context, width, height) {
+const numberOfReflection = 5;
+let scaleFactor = 0.5;
+let alphaFactor = 0.9;
+
+for (let i = 0; i < numberOfReflection; i++) {
+context.globalAlpha = Math.pow(alphaFactor, i + 1);
+const newWidth = width * Math.pow(scaleFactor, i + 1);
+const newHeight = height * Math.pow(scaleFactor, i + 1);
+const dx = (width - newWidth) / 2;
+const dy = (height - newHeight) / 2;
+
+context.drawImage(canvas, 0, 0, width, height, dx, dy, newWidth, newHeight);
+}
+
+context.globalAlpha = 1.0;
+}
+
+function applyEdgeDetection(context, width, height) {
+const imageData = context.getImageData(0, 0, width, height);
+const grayScaled = grayscale(imageData.data, width, height);
+const edgeData = sobelFilter(grayScaled, width, height);
+context.putImageData(new ImageData(edgeData, width, height), 0, 0);
+}
+
+function applyCannyEdgeDetection(context, width, height) {
+const imageData = context.getImageData(0, 0, width, height);
+const grayScaled = grayscale(imageData.data, width, height);
+const blurred = gaussianBlur(grayScaled, width, height);
+const edgeData = cannyFilter(blurred, width, height);
+context.putImageData(new ImageData(edgeData, width, height), 0, 0);
+}
+
+function grayscale(data, width, height) {
+const result = new Uint8ClampedArray(width * height * 4);
+for (let i = 0; i < data.length; i += 4) {
+const avg = 0.34 * data[i] + 0.5 * data[i + 1] + 0.16 * data[i + 2];
+result[i] = avg;
+result[i + 1] = avg;
+result[i + 2] = avg;
+result[i + 3] = 255;
+}
+return result;
+}
