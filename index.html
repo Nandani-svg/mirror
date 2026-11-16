@@ -72,4 +72,23 @@ max-height: 100%;
 document.addEventListener('DOMContentLoaded', function () {
 const canvas = document.getElementById('canvas');
 const context = canvas.getContext('2d');
-let videoStream = null
+let videoStream = null;
+let video = document.createElement('video');
+let flipHorizontal = false;
+let infinityEffect = false;
+let rotationAngle = 0;
+let edgeDetectionEnabled = false;
+let cannyEdgeDetectionEnabled = false;
+
+const btnToggle = document.getElementById('btnToggle');
+const btnFlip = document.getElementById('btnFlip');
+const btnEffect = document.getElementById('btnEffect');
+const btnRotate = document.getElementById('btnRotate');
+const btnSave = document.getElementById('btnSave');
+
+document.getElementById('btnEdge').addEventListener('click', function () {
+edgeDetectionENabled = !edgeDetectionEnabled;
+if (edgeDetectionEnabled) {
+cannyEdgeDetectionEnabled = false;
+}
+});
