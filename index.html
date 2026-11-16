@@ -87,7 +87,7 @@ const btnRotate = document.getElementById('btnRotate');
 const btnSave = document.getElementById('btnSave');
 
 document.getElementById('btnEdge').addEventListener('click', function () {
-edgeDetectionENabled = !edgeDetectionEnabled;
+edgeDetectionEnabled = !edgeDetectionEnabled;
 if (edgeDetectionEnabled) {
 cannyEdgeDetectionEnabled = false;
 }
@@ -102,9 +102,9 @@ edgeDetectionEnabled = false;
 
 btnToggle.addEventListener('click', function (){
 if (videoStream) {
-videoStream.getTracks().forEach(track => track.stop(();
+videoStream.getTracks().forEach(track => track.stop());
 videoStream = null;
-btnToggle.textContent = 'Turn On'
+btnToggle.textContent = 'Turn On';
 btnToggle.classList.replace('btn-danger', 'btn-success');
 } else {
 navigator.mediaDevices.getUserMedia({ video: true })
@@ -245,7 +245,7 @@ const pixelIndex = (y * width + x) * 4;
 blurredData[pixelIndex] = sum / kernelWeight;
 blurredData[pixelIndex + 1] = sum / kernelWeight;
 blurredData[pixelIndex + 2] = sum / kernelWeight;
-blurredData[pixelIndex + 3] = sum / kernelWeight;
+blurredData[pixelIndex + 3] = 255;
 }
 }
 return blurredData;
