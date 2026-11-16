@@ -217,3 +217,55 @@ result[i + 3] = 255;
 }
 return result;
 }
+
+function gaussianBlur(data, width, height) {
+const kernel = [
+[1, 2, 1],
+[2, 4, 2],
+[1, 2, 1]
+];
+const kernelWeight = 16;
+const blurredData = new Uint8ClampedArray(width * height * 4);
+
+for (let y = 1; y < height - 1; y++) {
+for (let x = 1; x < width - 1; x++) {
+let sum = 0;
+let sumAlpha = 0;
+
+for (let cy = -1; cy <= 1; cy++) {
+for (let cx = -1; cx <= 1; cx++) {
+const pixel = ((y + cy) * width + (x + cx)) * 4;
+const weight = kernel[cy + 1][cx + 1];
+sum += data[pixel] * weight;
+sumAlpha += data[pixel + 3];
+}
+}
+
+const pixelIndex = (y * width + x) * 4;
+blurredData[pixelIndex] = sum / kernelWeight;
+blurredData[pixelIndex + 1] = sum / kernelWeight;
+blurredData[pixelIndex + 2] = sum / kernelWeight;
+blurredData[pixelIndex + 3] = sum / kernelWeight;
+}
+}
+return blurredData;
+}
+
+function cannyFilter(data, width, height) {
+
+const sobelData = sobelFilter(data, width, height);
+const result = new Uint8ClampedArray(width * height * 4);
+
+for (let i = 0; i < sobelData.length; i += 4) {
+const magnitude = sobelData[i];
+if (magnitude > 50) {
+result[i] = result[i + 1] = result[i + 2] = 255;
+result[i + 3] = 255;
+} else {
+result[i] = result[i + 1] = result[i + 2] = 0;
+result[i + 3] = 255;
+}
+}
+
+return result;
+}
